@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://colorist-pulatov.framer.website/sitemap.xml

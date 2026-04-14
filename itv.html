@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITV | Colorist Pulatov Portfolio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #111111;
+            --text-color: #f0f0f0;
+            --accent-color: #f0f0f0;
+            --muted-color: #666666;
+            --border-color: rgba(255, 255, 255, 0.08); 
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            --font-main: 'Geist', 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-main); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+        /* 🎬 Analog Cinematic Grain */
+        body::before {
+            content: ''; position: fixed; top: -100%; left: -100%; width: 300%; height: 300%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03; pointer-events: none; z-index: 9999; animation: noise 0.4s steps(4) infinite;
+        }
+
+        @keyframes noise { 0%, 100% { transform: translate(0, 0); } 10% { transform: translate(-2%, -2%); } 30% { transform: translate(1%, -3%); } 50% { transform: translate(-1%, 3%); } 70% { transform: translate(2%, 1%); } 90% { transform: translate(-2%, -1%); } }
+
+        .grid-pattern { position: fixed; inset: 0; background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px; z-index: -2; opacity: 0.5; pointer-events: none; }
+        .scanline { width: 100%; height: 100px; z-index: 100; background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 100%); position: fixed; bottom: 110%; pointer-events: none; animation: scanline 8s linear infinite; }
+        @keyframes scanline { 0% { bottom: 110%; } 100% { bottom: -110px; } }
+
+        .gsap-nav { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-20px); display: flex; align-items: center; gap: 48px; z-index: 1000; background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; padding: 14px 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); opacity: 0; transition: border-color var(--transition); }
+        .gsap-nav:hover { border-color: rgba(255, 255, 255, 0.15); }
+        .logo { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--text-color); text-decoration: none; }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-links a { font-size: 11px; font-weight: 600; color: var(--muted-color); text-transform: uppercase; text-decoration: none; transition: color var(--transition); }
+        .nav-links a:hover, .nav-links a.active { color: #fff; }
+        .nav-time { font-size: 12px; font-weight: 500; color: var(--muted-color); font-variant-numeric: tabular-nums; padding-left: 24px; border-left: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .container { max-width: 1500px; margin: 0 auto; position: relative; padding: 0 80px; }
+
+        .project-hero { padding-top: 250px; padding-bottom: 120px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .hero-meta { display: flex; justify-content: center; align-items: center; gap: 100px; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); width: 100%; max-width: 800px; padding-bottom: 20px; }
+        .meta-group { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .meta-group:first-child { text-align: left; }
+        .meta-group:last-child { text-align: right; }
+        .meta-label { font-size: 8px; font-weight: 700; letter-spacing: 0.3em; color: var(--muted-color); text-transform: uppercase; }
+        .meta-value { font-size: 11px; font-weight: 500; color: #ccc; }
+        .project-title { font-size: clamp(40px, 9vw, 130px); font-weight: 800; letter-spacing: -0.05em; line-height: 0.8; text-transform: uppercase; max-width: 1200px; }
+
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; padding-bottom: 200px; }
+        .gallery-item { position: relative; background: #151515; overflow: hidden; width: 100%; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1); opacity: 0.85; }
+        .gallery-item:hover img { transform: scale(1.03); opacity: 1; }
+        .item-wide { grid-column: span 2; aspect-ratio: 21/9; }
+        .item-pair { grid-column: span 1; aspect-ratio: 4/5; }
+
+        .hud-corner { position: absolute; width: 15px; height: 15px; border-color: rgba(255,255,255,0.15); border-style: solid; pointer-events: none; opacity: 0; transition: var(--transition); }
+        .gallery-item:hover .hud-corner { opacity: 1; }
+        .hud-tl { top: 30px; left: 30px; border-width: 1px 0 0 1px; }
+        .hud-br { bottom: 30px; right: 30px; border-width: 0 1px 1px 0; }
+        .float-meta { position: absolute; bottom: 30px; left: 30px; font-size: 8px; font-weight: 600; text-transform: uppercase; color: rgba(255,255,255,0.4); opacity: 0; transform: translateY(10px); transition: var(--transition); }
+        .gallery-item:hover .float-meta { opacity: 1; transform: translateY(0); }
+
+        
+        @media (max-width: 1000px) {
+            .container { padding: 0 30px; }
+            .project-hero { padding-top: 180px; }
+            .gallery-grid { grid-template-columns: 1fr; gap: 30px; }
+            .item-wide, .item-pair { grid-column: auto; aspect-ratio: 16/9; }
+        }
+
+        /* 🍔 Burger Button Style */
+        .burger-btn {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            width: 24px;
+            padding: 10px 0;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .burger-btn span {
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: #fff;
+            transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+        }
+
+        /* 📱 Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 15, 15, 0.98);
+            backdrop-filter: blur(30px);
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 40px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.7, 0, 0.2, 1);
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 20px;
+        }
+
+        .mobile-link {
+            font-size: 42px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.04em;
+            color: #fff;
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.5s, transform 0.5s;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .mobile-menu-overlay.active .mobile-link {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Burger Active States (X Shape) */
+        .gsap-nav.menu-open #burger-toggle span:nth-child(1) {
+            transform: translateY(4px) rotate(45deg);
+        }
+
+        .gsap-nav.menu-open #burger-toggle span:nth-child(2) {
+            transform: translateY(-3px) rotate(-45deg);
+        }
+
+        @media (max-width: 900px) {
+            .gsap-nav { 
+                width: calc(100% - 40px); 
+                justify-content: space-between; 
+                padding: 10px 20px; 
+                border-radius: 40px;
+                gap: 20px;
+            }
+            .nav-links { display: none; }
+            .burger-btn { display: flex; }
+            .nav-time {
+                display: block;
+                border: none;
+                padding: 0;
+                font-size: 11px;
+                margin-left: auto;
+                /* Push time to the right next to burger */
+            }
+            .logo { font-size: 11px; }
+        }
+
+        /* Footer Style (Synced with index2) */
+        footer {
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--muted-color);
+            position: relative;
+            z-index: 5;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-socials a {
+            color: var(--muted-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .footer-socials a:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 900px) {
+            footer {
+                flex-direction: column;
+                gap: 24px;
+                padding: 40px 20px;
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="grid-pattern"></div>
+    <div class="scanline"></div>
+
+                    <nav class="gsap-nav">
+        <a href="index.html" class="logo">E. PULATOV</a>
+        <div class="nav-links">
+            <a href="index.html" class="custom-hover">Main</a>
+            <a href="portfolio.html" class="custom-hover">Portfolio</a>
+            <a href="contacts.html" class="custom-hover">Contacts</a>
+        </div>
+        <div class="nav-time" id="current-time">--:--</div>
+
+        <!-- Burger Menu -->
+        <div class="burger-btn" id="burger-toggle">
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu">
+        <div class="mobile-menu-inner">
+            <a href="index.html" class="mobile-link">Main</a>
+            <a href="portfolio.html" class="mobile-link">Portfolio</a>
+            <a href="contacts.html" class="mobile-link">Contacts</a>
+        </div>
+    </div>
+
+
+    <main class="container">
+        <section class="project-hero">
+            <div class="hero-meta gsap-header-reveal">
+                <div class="meta-group">
+                    <span class="meta-label">CODE</span>
+                    <span class="meta-value">ITV-PRJ-2025</span>
+                </div>
+                <div class="meta-group">
+                    <span class="meta-label">SPACE</span>
+                    <span class="meta-value">ACES / REC.709</span>
+                </div>
+            </div>
+            <h1 class="project-title gsap-header-reveal">ITV</h1>
+        </section>
+
+        <section class="gallery-grid">
+            <div class="gallery-item item-wide gsap-reveal">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="float-meta">ITV.FS.01</div>
+                <img src="img/ITV-240296955/img_1.jpg" alt="Frame">
+            </div>
+
+            <div class="gallery-item item-pair gsap-reveal"><img src="img/ITV-240296955/img_2.jpg" alt="Frame"></div>
+            <div class="gallery-item item-pair gsap-reveal"><img src="img/ITV-240296955/img_3.jpg" alt="Frame"></div>
+
+            <div class="gallery-item item-wide gsap-reveal"><img src="img/ITV-240296955/img_4.jpg" alt="Frame"></div>
+
+            <div class="gallery-item item-pair gsap-reveal"><img src="img/ITV-240296955/img_5.jpg" alt="Frame"></div>
+            <div class="gallery-item item-pair gsap-reveal"><img src="img/ITV-240296955/img_6.jpg" alt="Frame"></div>
+
+            <div class="gallery-item item-wide gsap-reveal"><img src="img/ITV-240296955/img_7.jpg" alt="Frame"></div>
+
+            <div class="gallery-item item-pair gsap-reveal"><img src="img/ITV-240296955/img_8.jpg" alt="Frame"></div>
+            <div class="gallery-item item-pair gsap-reveal"><img src="img/ITV-240296955/img_9.jpg" alt="Frame"></div>
+
+            <div class="gallery-item item-wide gsap-reveal"><img src="img/ITV-240296955/img_10.jpg" alt="Frame"></div>
+        </section>
+    </main>
+
+            <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            &copy; 2026 E. PULATOV
+        </div>
+        <div class="footer-socials">
+            <a href="https://instagram.com" target="_blank" class="custom-hover">Ig</a>
+            <a href="https://t.me" target="_blank" class="custom-hover">Tg</a>
+            <a href="https://youtube.com" target="_blank" class="custom-hover">Yt</a>
+        </div>
+    </footer>
+
+
+    <script>
+        const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+        gsap.registerPlugin(ScrollTrigger);
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ":" + 
+                            now.getMinutes().toString().padStart(2, '0') + ":" + 
+                            now.getSeconds().toString().padStart(2, '0');
+            const el = document.getElementById('current-time');
+            if(el) el.textContent = timeStr;
+        }
+        setInterval(updateTime, 1000); updateTime();
+        gsap.to('.gsap-nav', { opacity: 1, y: 0, duration: 1.5, ease: "expo.out", delay: 0.3 });
+        gsap.from('.gsap-header-reveal', { y: 40, opacity: 0, duration: 1.5, stagger: 0.3, ease: "expo.out", delay: 0.4 });
+        gsap.utils.toArray('.gsap-reveal').forEach((item) => {
+            gsap.from(item, {
+                opacity: 0, y: 100, duration: 2, ease: "expo.out",
+                scrollTrigger: { trigger: item, start: 'top 92%', toggleActions: 'play none none none' }
+            });
+        });
+        
+        // Burger Menu Logic (Exact from index.html)
+        const burgerBtn = document.getElementById('burger-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navBar = document.querySelector('.gsap-nav');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            const isOpen = mobileMenu.classList.toggle('active');
+            navBar.classList.toggle('menu-open');
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+
+            if (isOpen) {
+                // Stagger reveal links
+                gsap.fromTo(".mobile-link",
+                    { opacity: 0, x: 40 },
+                    { opacity: 1, x: 0, duration: 0.6, stagger: 0.08, ease: "power4.out", delay: 0.2 }
+                );
+            }
+        }
+
+        if(burgerBtn) burgerBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+
+
+    </script>
+</body>
+</html>

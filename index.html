@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorist Pulatov Portfolio</title>
+
+    <!-- Google Fonts: Geist & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- GSAP & Lenis Smooth Scrolling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <style>
+        /* Base Reset & Variables - Minimalist Graphite Theme */
+        :root {
+            --bg-color: #111111;
+            /* Refined Dark Charcoal */
+            --text-main: #f0f0f0;
+            /* Soft white */
+            --text-muted: #888888;
+            --font-main: 'Geist', 'Inter', sans-serif;
+            --transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            --radius-md: 4px;
+            --radius-lg: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: default;
+        }
+
+        body {
+            background-color: #111111;
+            /* Refined Dark Charcoal */
+            color: var(--text-main);
+            font-family: var(--font-main);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* 🎬 Analog Cinematic Moving Film Grain - Ultra Fine */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.035;
+            /* Exceptionally subtle, barely visible film texture */
+            pointer-events: none;
+            z-index: 9999;
+            /* Real analog jitter effect */
+            animation: modernNoise 0.4s steps(4) infinite;
+        }
+
+        @keyframes modernNoise {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            10% {
+                transform: translate(-2%, -2%);
+            }
+
+            30% {
+                transform: translate(1%, -3%);
+            }
+
+            50% {
+                transform: translate(-1%, 3%);
+            }
+
+            70% {
+                transform: translate(2%, 1%);
+            }
+
+            90% {
+                transform: translate(-2%, -1%);
+            }
+        }
+
+        /* 📐 Global Technical Grid Pattern */
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            /* Microscopic dots, spaced 50px - Blueprint style */
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.8;
+        }
+
+        /* 📸 Camera Viewfinder Ornaments (HUD) */
+        .hud-corner {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            pointer-events: none;
+            z-index: 10;
+            transition: border-color var(--transition);
+        }
+
+        .hud-tl {
+            top: 30px;
+            left: 40px;
+            border-right: 0;
+            border-bottom: 0;
+        }
+
+        .hud-br {
+            bottom: 30px;
+            right: 40px;
+            border-left: 0;
+            border-top: 0;
+        }
+
+        section:hover .hud-corner {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background 0.3s, mix-blend-mode 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        .custom-cursor.hovered {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            mix-blend-mode: normal;
+        }
+
+        a,
+        .work-item {
+            cursor: none;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Reusable Components */
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Premium Floating Island Navigation */
+        .gsap-nav {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 48px;
+            z-index: 100;
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 40px;
+            padding: 14px 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: border-color var(--transition);
+        }
+
+        .gsap-nav:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .logo {
+            font-size: 13px;
+            font-weight: 800;
+            /* Made significantly bolder per user request */
+            letter-spacing: -0.02em;
+            /* Even tighter spacing per user request */
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        /* 📟 Monitor Scanline Effect */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.03);
+            z-index: 9998;
+            pointer-events: none;
+            animation: scan 10s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                top: -2%;
+            }
+
+            100% {
+                top: 102%;
+            }
+        }
+
+        /* Fixed nav link pointer fix */
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color var(--transition);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-main);
+        }
+
+        .nav-time {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            padding-left: 24px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 🍔 Burger Button Style */
+        .burger-btn {
+            display: none;
+            /* Hidden by default */
+            flex-direction: column;
+            gap: 6px;
+            width: 24px;
+            padding: 10px 0;
+        }
+
+        .burger-btn span {
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: #fff;
+            transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+        }
+
+        /* 📱 Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 15, 15, 0.98);
+            backdrop-filter: blur(30px);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            /* Align links to the right */
+            padding-right: 40px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.7, 0, 0.2, 1);
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            /* Right-aligned text */
+            gap: 20px;
+            /* Reduced gap between links */
+        }
+
+        .mobile-link {
+            font-size: 42px;
+            /* Large editorial size */
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.04em;
+            /* Tight letter spacing */
+            color: #fff;
+            opacity: 0;
+            transform: translateX(40px);
+            /* Slide in from the right */
+            transition: opacity 0.5s, transform 0.5s;
+            line-height: 1;
+        }
+
+        .mobile-menu-overlay.active .mobile-link {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Body lock when menu open */
+        body.lock-scroll {
+            overflow: hidden !important;
+            height: 100vh;
+        }
+
+        /* Burger Active States */
+        .gsap-nav.menu-open #burger-toggle span:nth-child(1) {
+            transform: translateY(3.5px) rotate(45deg);
+        }
+
+        .gsap-nav.menu-open #burger-toggle span:nth-child(2) {
+            transform: translateY(-3.5px) rotate(-45deg);
+        }
+
+        /* -------------------------- */
+        /* Premium Cinematic Hero Section */
+        /* -------------------------- */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .hero-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+        }
+
+        .hero-title {
+            font-family: var(--font-main);
+            font-size: clamp(60px, 11vw, 200px);
+            /* Reduced overall scale */
+            font-weight: 800;
+            line-height: 0.75;
+            /* Tightened vertical distance significantly */
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            color: #ffffff;
+            white-space: nowrap;
+            mix-blend-mode: difference;
+            cursor: none;
+            position: relative;
+            z-index: 20;
+        }
+
+        /* Floating hover image revealed inside Hero */
+        .hero-hover-img-wrapper {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            /* Much smaller, elegant size */
+            aspect-ratio: 16/10;
+            /* Slightly taller, more editorial */
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 5;
+
+            /* Premium Minimalist Reveal: Wiping mask from the bottom */
+            clip-path: inset(100% 0 0 0);
+            transition: clip-path 0.5s cubic-bezier(0.7, 0, 0.2, 1), filter 0.5s ease;
+            filter: grayscale(100%);
+        }
+
+        .hero-hover-img-wrapper.active {
+            clip-path: inset(0% 0 0 0);
+            filter: grayscale(0%);
+        }
+
+        .hero-hover-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+
+            /* Scale parallax inside the mask */
+            transform: scale(1.3) translateY(10%);
+            transition: transform 0.6s cubic-bezier(0.7, 0, 0.2, 1);
+        }
+
+        .hero-hover-img-wrapper.active img {
+            transform: scale(1) translateY(0%);
+        }
+
+        /* -------------------------- */
+        /* Info & About Section */
+        /* -------------------------- */
+        .info-section {
+            padding: 140px 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .info-left {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+            padding-top: 20px;
+        }
+
+        .info-block h3 {
+            font-size: 16px;
+            text-transform: none;
+            /* Changed from uppercase to Sentence Case for clarity */
+            letter-spacing: -0.02em;
+            /* Tightened kerning significantly */
+            color: #fff;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .info-block p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 500px;
+        }
+
+        .info-right {
+            position: sticky;
+            top: 140px;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+            max-height: 900px;
+            border-radius: 0px;
+            /* Brutalist sharp */
+            overflow: hidden;
+            background: #111;
+        }
+
+        .info-right img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.1);
+        }
+
+        /* Works Section - Ultra Compact Minimalist Strategy */
+        .works-section {
+            padding: 100px 40px 160px;
+            /* Aligned with full bleed container padding */
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-family: var(--font-main);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: none;
+            /* No more wide uppercase */
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 30px;
+            height: 1px;
+            background: var(--text-muted);
+        }
+
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 20px;
+            /* Extremely compact, almost film-strip spacing */
+            align-items: start;
+        }
+
+        .work-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            /* Tight connection between image and text */
+            text-decoration: none;
+            will-change: transform, opacity;
+            cursor: none;
+        }
+
+        .work-image-wrapper {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            /* Classic cinematic ratio */
+            border-radius: 0px;
+            /* Sharp, architectural brutalist edges */
+            overflow: hidden;
+            position: relative;
+            background: #111;
+            /* Fallback for slow loads */
+            transform-style: preserve-3d;
+            box-shadow: none;
+            /* Flat and clean against the black */
+        }
+
+        .work-image-wrapper img {
+            width: 100%;
+            height: 120%;
+            /* Keep extra height for parallax */
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+            transition: filter 0.5s ease;
+        }
+
+        .work-item:hover .work-image-wrapper img {
+            transform: scale(1.02);
+            /* Very subtle, sophisticated scale */
+        }
+
+        /* Ambient dark overly on hover to focus the eye */
+        .work-image-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+
+        .work-item:hover .work-image-wrapper::after {
+            opacity: 1;
+            /* Darkens image when hovered */
+        }
+
+        .work-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0;
+        }
+
+        .work-title {
+            font-family: "Inter", sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0em;
+            text-transform: uppercase;
+            color: var(--text-main);
+            transition: color var(--transition);
+        }
+
+        .work-description {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Flip colors on hover */
+        .work-item:hover .work-title {
+            color: var(--text-muted);
+        }
+
+        /* Specific grid layout fixes */
+        /* Removed vertical aspect ratio rule to enforce cinematic wide frames on all */
+
+
+        /* Contact Section - Ultra Minimal Form */
+        .contact-section {
+            padding: 140px 40px 100px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Sophisticated Section Dividers */
+        .section-divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            position: relative;
+            margin: 0;
+            overflow: visible;
+        }
+
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 80px;
+            height: 1px;
+            background: #fff;
+            opacity: 0.2;
+        }
+
+        .divider-label {
+            position: absolute;
+            right: 40px;
+            top: -7px;
+            font-size: 9px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            background: #000;
+            padding: 0 15px;
+            font-weight: 500;
+        }
+
+        .contact-left h2 {
+            font-size: clamp(40px, 8vw, 100px);
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .contact-left p {
+            color: var(--text-muted);
+            font-size: 15px;
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #555;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #333;
+            color: #fff;
+            font-size: 16px;
+            padding: 10px 0;
+            font-family: var(--font-main);
+            outline: none;
+            transition: border-color var(--transition);
+            border-radius: 0;
+            cursor: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-bottom-color: #fff;
+        }
+
+        .form-group select {
+            appearance: none;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: #fff;
+            color: #000;
+            padding: 18px 40px;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: none;
+            align-self: flex-start;
+            margin-top: 10px;
+            transition: transform var(--transition);
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 5;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-socials a {
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-socials a:hover {
+            color: #fff;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .gsap-nav {
+                width: calc(100% - 40px);
+                justify-content: space-between;
+                gap: 20px;
+                padding: 10px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-time {
+                display: block;
+                border: none;
+                padding: 0;
+                font-size: 11px;
+                margin-left: auto;
+                /* Push time to the right next to burger */
+            }
+
+            .burger-btn {
+                display: flex;
+            }
+
+            .hero-title {
+                font-size: clamp(45px, 14vw, 100px);
+                /* Better scale for small screens */
+                white-space: normal;
+                text-align: center;
+                line-height: 0.75;
+                /* Tight vertical distance even on mobile */
+                letter-spacing: -0.05em;
+                display: block;
+                width: 100%;
+            }
+
+            .hero-center {
+                padding: 0 30px;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .hero-hover-img-wrapper {
+                width: 80vw;
+                /* Larger thumbnail on mobile for better visibility */
+                aspect-ratio: 4/5;
+                /* More portrait-ish/social for phones */
+            }
+
+            .works-grid {
+                grid-template-columns: 1fr !important;
+                /* Force one-by-one vertical stacking */
+                gap: 40px;
+                /* Increased spacing for clarity on mobile */
+            }
+
+            .work-title {
+                font-size: 14px;
+                /* Slightly larger text for mobile readability */
+            }
+
+            .info-section,
+            .contact-section {
+                grid-template-columns: 1fr;
+                gap: 60px;
+                padding: 100px 30px;
+            }
+
+            .info-left {
+                order: 1;
+                /* Information first */
+            }
+
+            .info-right {
+                position: relative;
+                top: 0;
+                height: 480px;
+                /* Slightly taller for better portrait feel */
+                order: 2;
+                /* Photo second */
+            }
+
+            .contact-left h2 {
+                font-size: 50px;
+            }
+        }
+
+        @media (min-width: 600px) and (max-width: 900px) {
+            /* Removed .works-grid 2-column rule to ensure 1fr on all mobile screens */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="custom-cursor"></div>
+
+    <!-- Background Patterns -->
+    <div class="grid-pattern"></div>
+    <div class="scanline"></div>
+
+    <!-- Floating Island Navigation -->
+        <nav class="gsap-nav">
+        <a href="index.html" class="logo">E. PULATOV</a>
+        <div class="nav-links">
+            <a href="index.html" class="custom-hover">Main</a>
+            <a href="portfolio.html" class="custom-hover">Portfolio</a>
+            <a href="contacts.html" class="custom-hover">Contacts</a>
+        </div>
+        <div class="nav-time" id="local-time">--:--</div>
+
+        <!-- Burger Menu -->
+        <div class="burger-btn" id="burger-toggle">
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu">
+        <div class="mobile-menu-inner">
+            <a href="index.html" class="mobile-link">Main</a>
+            <a href="portfolio.html" class="mobile-link">Portfolio</a>
+            <a href="contacts.html" class="mobile-link">Contacts</a>
+        </div>
+    </div>
+
+
+    <section class="hero" id="main">
+        <div class="hero-center gsap-fade-up">
+            <h1 class="hero-title fw-hover"
+                data-hover="https://framerusercontent.com/images/O5JgZGicy6ImRYkYflfjAn0488E.jpg,https://framerusercontent.com/images/8jSoOvHPcuxyTDZovgJsL3SLNc.jpg,https://framerusercontent.com/images/fCsEjSwcx1QUfAvy3SV2wDU8.jpg">
+                COLORIST</h1>
+            <h1 class="hero-title fw-hover"
+                data-hover="img/1.png,https://framerusercontent.com/images/wX50EXGpIcj0kepGu1TkfWhajo.png,https://framerusercontent.com/images/S5X9bEeRyvJM9prhB67KD9TZbY.jpg,https://framerusercontent.com/images/8VYUHv8E1KPlxyuYkxhRuFsnGg.png">
+                PULATOV</h1>
+        </div>
+
+        <div class="hero-hover-img-wrapper" id="hero-hover-wrap">
+            <img src="" id="hero-hover-target" alt="Reveal">
+        </div>
+    </section>
+
+    <!-- Divider 00 -->
+    <div class="section-divider">
+        <span class="divider-label">00 / Works</span>
+    </div>
+
+    <!-- Works Section -->
+    <section class="works-section container" id="portfolio">
+        <div class="hud-corner hud-tl"></div>
+        <div class="hud-corner hud-br"></div>
+        <div class="section-header gsap-fade-up">
+            <h2 class="section-title">Works</h2>
+        </div>
+
+        <div class="works-grid">
+            
+            <!-- Project: Documentary Film -->
+            <a href="documentary-film.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/documentary-film/img_16.jpg" alt="Documentary Film">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Documentary Film</h3>
+                    <p class="work-description">Cinematic color grading for a documentary project, focusing on narrative depth and visual atmosphere.</p>
+                </div>
+            </a>
+
+            <!-- Project: IMAGINE (IT Park) -->
+            <a href="imagine.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/IMAGINE-(IT-Park)/img_3.png" alt="IMAGINE (IT Park)">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">IMAGINE (IT Park)</h3>
+                    <p class="work-description">Commercial project for IT Park, focusing on modern, high-tech visual aesthetics.</p>
+                </div>
+            </a>
+
+            <!-- Project: Brazilia -->
+            <a href="brazilia.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/Brazilia(ziyokhonov-you-tube)/img_1.jpg" alt="Brazilia Project">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Brazilia🇧🇷 (Ziyokhonov YouTube)</h3>
+                    <p class="work-description">Cinematic color grading for Ziyokhonov's YouTube channel project in Brazil.</p>
+                </div>
+            </a>
+
+            <!-- Project: Porsche Uzbekistan -->
+            <a href="porsche.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/Porsche-Uzbekistan/img_1.jpg" alt="Porsche Uzbekistan">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Porsche Uzbekistan</h3>
+                    <p class="work-description">Commercial project showcasing luxury and performance through sophisticated color grading.</p>
+                </div>
+            </a>
+
+            <!-- Project: Documentary Film // 02 -->
+            <a href="documentary-film-2.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/documentary-film-240296585/img_1.jpg" alt="Documentary Film 02">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Documentary Film // 02</h3>
+                    <p class="work-description">A second cinematic documentary project, exploring raw storytelling and natural lighting.</p>
+                </div>
+
+            <!-- Project: Music Video -->
+            <a href="music-video.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/Music-video-240294969/img_1.jpg" alt="Music Video">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Music Video</h3>
+                    <p class="work-description">Dynamic and high-energy color grading for a fast-paced musical production.</p>
+                </div>
+            </a>
+ 
+            <!-- Project: Milaf Cola -->
+            <a href="milaf-cola.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/Milaf-Cola-240295085/img_1.jpg" alt="Milaf Cola">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Milaf Cola</h3>
+                    <p class="work-description">Refreshing commercial color grading for a major beverage brand.</p>
+                </div>
+            </a>
+ 
+            <!-- Project: NRG -->
+            <a href="nrg.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/NRG-240282015/img_1.jpg" alt="NRG">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">NRG</h3>
+                    <p class="work-description">Dynamic architectural and industrial color grading for NRG developments.</p>
+                </div>
+            </a>
+ 
+            <!-- Project: INSON -->
+            <a href="inson.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/documentary-film-(Inson)-240283827/img_1.jpg" alt="INSON">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">INSON</h3>
+                    <p class="work-description">Deeply emotional documentary color grading focusing on human stories.</p>
+                </div>
+            </a>
+ 
+            <!-- Project: Yapona Mama -->
+            <a href="yapona-mama.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/Yapona-Mama-240282389/img_1.jpg" alt="Yapona Mama">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Yapona Mama</h3>
+                    <p class="work-description">Vibrant and appetizing commercial color grading for the Yapona Mama brand.</p>
+                </div>
+            </a>
+ 
+            <!-- Project: Switzerland -->
+            <a href="switzerland.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/Switzerland-(for-youtube-channel)-240295855/img_1.jpg" alt="Switzerland">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Switzerland (YouTube)</h3>
+                    <p class="work-description">Cinematic travel color grading for a high-end YouTube production.</p>
+                </div>
+            </a>
+ 
+            <!-- Project: ITV -->
+            <a href="itv.html" class="work-item gsap-fade-up">
+                <div class="work-image-wrapper">
+                    <img src="img/ITV-240296955/img_1.jpg" alt="ITV">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">ITV</h3>
+                    <p class="work-description">Broadcasting quality color grading for premium television content.</p>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Divider 01 -->
+    <div class="section-divider">
+        <span class="divider-label">01 / Info</span>
+    </div>
+
+    <!-- Info Section (Shifted from old Hero setup) -->
+    <section class="info-section" id="info">
+        <div class="hud-corner hud-tl"></div>
+        <div class="hud-corner hud-br"></div>
+        <div class="info-left gsap-fade-up">
+            <h2 class="section-title">Info</h2>
+
+            <div class="info-block">
+                <h3>What I do</h3>
+                <p>I work as a colorist, bringing stories to life through color. I enhance mood, emotion, and atmosphere
+                    in commercials, documentaries, music videos, YouTube shows, and short films. My work focuses on
+                    creating visually compelling, cinematic, and professional imagery.</p>
+            </div>
+
+            <div class="info-block">
+                <h3>My background</h3>
+                <p>I have been a colorist for over 2 years, during which I have worked on 30+ commercials, 10+
+                    documentary films, as well as various music videos, YouTube shows, and short films.</p>
+            </div>
+
+            <div class="info-block">
+                <h3>My approach</h3>
+                <p>I see color as a world. Through it, I convey joy and sadness, richness and poverty, hope and
+                    hopelessness. I pay attention to tonal balance, contrast, and emotion, aiming to support the story
+                    without overpowering it.</p>
+            </div>
+
+            <div class="info-block">
+                <h3>Career</h3>
+                <p>Over the last two years, I have built a portfolio of commercial, documentary, and music projects.
+                    Each project reflects my dedication to clean, cinematic, and story-driven color grading, while
+                    adapting to the needs of different genres and platforms.</p>
+            </div>
+        </div>
+        <div class="info-right gsap-fade-up">
+            <img src="img/elbek.JPG" alt="Elbek Pulatov Portrait">
+        </div>
+    </section>
+
+    <!-- Divider 02 -->
+    <div class="section-divider">
+        <span class="divider-label">02 / Contact</span>
+    </div>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contacts">
+        <div class="hud-corner hud-tl"></div>
+        <div class="hud-corner hud-br"></div>
+        <div class="contact-left gsap-fade-up">
+            <h2>Let's build<br>together</h2>
+            <p>Ready to elevate your visual storytelling? Drop your details and project info, and I will get back to you
+                with a tailored approach.</p>
+        </div>
+
+        <form class="contact-form gsap-fade-up">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" placeholder="Xasanov Feruz" class="custom-hover">
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" placeholder="notferuz@gmail.com" class="custom-hover">
+            </div>
+
+            <div class="form-group">
+                <label>Budget</label>
+                <select class="custom-hover">
+                    <option value="" disabled selected>$2,000 - $5,000</option>
+                    <option value="under2k">Under $2,000</option>
+                    <option value="2k-5k">$2,000 - $5,000</option>
+                    <option value="5k-10k">$5,000 - $10,000</option>
+                    <option value="over10k">$10,000+</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Message</label>
+                <textarea placeholder="Briefly describe your brand and project" class="custom-hover"></textarea>
+            </div>
+
+            <button type="button" class="submit-btn custom-hover">Submit</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            &copy; 2026 E. PULATOV
+        </div>
+        <div class="footer-socials">
+            <a href="https://instagram.com" target="_blank" class="custom-hover">Ig</a>
+            <a href="https://t.me" target="_blank" class="custom-hover">Tg</a>
+            <a href="https://youtube.com" target="_blank" class="custom-hover">Yt</a>
+        </div>
+    </footer>
+
+    <!-- Animations Setup -->
+    <script>
+        // Update Time
+        function updateTime() {
+            const timeEl = document.getElementById('local-time');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Tashkent', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            if (timeEl) timeEl.textContent = 'Tashkent, ' + timeStr;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Custom Cursor & Hover Logic
+        const cursor = document.getElementById("custom-cursor");
+        const linkHoverables = document.querySelectorAll("a, .custom-hover");
+        const worksImages = document.querySelectorAll(".work-item");
+
+        // Interactive Hero Floating Image
+        const heroWrap = document.getElementById("hero-hover-wrap");
+        const heroTarget = document.getElementById("hero-hover-target");
+        const heroWords = document.querySelectorAll(".fw-hover");
+
+        let mouseX = 0, mouseY = 0;
+        let imgObjX = 0, imgObjY = 0;
+
+        let hoverImagesArray = [];
+        let currentHoverIndex = 0;
+        let lastSwitchX = 0;
+        let lastSwitchY = 0;
+        const switchThreshold = 40; // Pixels mouse must travel to switch to the next photo
+
+        document.addEventListener("mousemove", (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            // Cursor position
+            cursor.style.left = mouseX + "px";
+            cursor.style.top = mouseY + "px";
+
+            // Image cycling logic if active
+            if (hoverImagesArray.length > 1 && heroWrap.classList.contains("active")) {
+                const dist = Math.hypot(mouseX - lastSwitchX, mouseY - lastSwitchY);
+                if (dist > switchThreshold) {
+                    currentHoverIndex = (currentHoverIndex + 1) % hoverImagesArray.length;
+                    heroTarget.src = hoverImagesArray[currentHoverIndex]; // Cycle image
+                    lastSwitchX = mouseX;
+                    lastSwitchY = mouseY;
+                }
+            }
+        });
+
+        // Basic cursor states
+        linkHoverables.forEach(el => {
+            el.addEventListener("mouseenter", () => cursor.classList.add("hovered"));
+            el.addEventListener("mouseleave", () => cursor.classList.remove("hovered"));
+        });
+
+        worksImages.forEach(el => {
+            el.addEventListener("mouseenter", () => cursor.classList.add("view-hover"));
+            el.addEventListener("mouseleave", () => cursor.classList.remove("view-hover"));
+        });
+
+        // Mobile Menu Logic
+        const burgerBtn = document.getElementById('burger-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navBar = document.querySelector('.gsap-nav');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            const isOpen = mobileMenu.classList.toggle('active');
+            navBar.classList.toggle('menu-open');
+            document.body.classList.toggle('lock-scroll'); // Lock main page scrolling
+
+            if (isOpen) {
+                if (window.lenis) window.lenis.stop(); // Stop scroll engine
+                // Stagger in links from the right
+                gsap.fromTo(".mobile-link",
+                    { opacity: 0, x: 40 },
+                    { opacity: 1, x: 0, duration: 0.6, stagger: 0.08, ease: "power4.out", delay: 0.2 }
+                );
+            } else {
+                if (window.lenis) window.lenis.start(); // Start scroll engine
+            }
+        }
+
+        burgerBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+
+        // Interactive Hero Hover state
+        heroWords.forEach(word => {
+            word.addEventListener("mouseenter", (e) => {
+                const rawData = e.target.getAttribute("data-hover");
+                if (rawData) {
+                    hoverImagesArray = rawData.split(","); // parse the array
+                    currentHoverIndex = 0;
+                    heroTarget.src = hoverImagesArray[currentHoverIndex];
+
+                    heroWrap.classList.add("active");
+                    cursor.classList.add("view-hover"); // Optionally enlarge cursor too
+
+                    // Reset threshold anchors
+                    lastSwitchX = mouseX;
+                    lastSwitchY = mouseY;
+                }
+            });
+            word.addEventListener("mouseleave", () => {
+                heroWrap.classList.remove("active");
+                cursor.classList.remove("view-hover");
+                hoverImagesArray = []; // reset
+            });
+        });
+
+        // Smooth follow for the hero image
+        function renderHoverImage() {
+            if (heroWrap.classList.contains("active")) {
+                // Lerp smoothing
+                imgObjX += (mouseX - imgObjX) * 0.1;
+                imgObjY += (mouseY - imgObjY) * 0.1;
+                heroWrap.style.left = imgObjX + "px";
+                heroWrap.style.top = imgObjY + "px";
+            } else {
+                // Instantly snap to mouse when invisible to be ready
+                imgObjX = mouseX;
+                imgObjY = mouseY;
+            }
+            requestAnimationFrame(renderHoverImage);
+        }
+        renderHoverImage();
+
+
+        // GSAP Initialization
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Smooth Scrolling with Lenis
+        window.lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+        });
+
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000) });
+        gsap.ticker.lagSmoothing(0);
+
+        const customEase = "power3.out";
+
+        // Navbar slide down
+        gsap.from(".gsap-nav", { y: -30, opacity: 0, duration: 1.2, ease: customEase, delay: 0.1 });
+
+        // Minimal Mask Reveal for title
+        gsap.from(".item-reveal", {
+            y: "110%",
+            duration: 1.4,
+            ease: "power4.out",
+            stagger: 0.1,
+            delay: 0.2
+        });
+
+        gsap.from(".hero-subtitle, .hero-tags", { y: 20, opacity: 0, duration: 1.4, ease: customEase, delay: 0.5 });
+
+        // Hero Image Sliding clip-path reveal
+        const heroWrapper = document.querySelector(".gsap-image-reveal");
+        if (heroWrapper) {
+            gsap.from(heroWrapper, {
+                clipPath: "inset(0 100% 0 0)", // Swipes from left
+                duration: 2.2,
+                ease: "power4.inOut",
+                delay: 0.1
+            });
+
+            // Subtle img reset inside wrapper
+            gsap.to(".gsap-parallax-img", {
+                x: "0%",
+                duration: 2.2,
+                ease: "power4.inOut",
+                delay: 0.1
+            });
+
+            // Hero scroll parallax
+            gsap.to(".gsap-parallax-img", {
+                yPercent: -15, scale: 1.1,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".hero", start: "top top", end: "bottom top", scrub: true
+                }
+            });
+        }
+
+        // Works Grid Parallax & Reveals
+        const workItems = gsap.utils.toArray('.works-section .gsap-fade-up');
+
+        // Reveal animation (Slower and softer)
+        workItems.forEach((el, index) => {
+            gsap.from(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                y: 100,
+                scale: 0.96,
+                opacity: 0,
+                duration: 2, // Slower reveal
+                ease: "power2.out",
+                delay: (index % 3) * 0.15 // Stagger based on 3 columns
+            });
+        });
+
+        // Parallax inside every project thumbnail (Slower, smoother scrub)
+        gsap.utils.toArray('.work-image-wrapper img').forEach(img => {
+            gsap.to(img, {
+                yPercent: -15, // image moves up as you scroll down
+                ease: "none",
+                scrollTrigger: {
+                    trigger: img.parentElement,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: 1.5 // Added scrub inertia for slower parallax feeling
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

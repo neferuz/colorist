@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Colorist Pulatov Archive</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0c0c0c;
+            --text-color: #f0f0f0;
+            --muted-color: #666;
+            --accent-color: #fff;
+            --border-color: rgba(255, 255, 255, 0.08); 
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            --font-main: 'Geist', 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-main); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+        /* 🎬 Analog Cinematic Grain */
+        body::before {
+            content: ''; position: fixed; top: -100%; left: -100%; width: 300%; height: 300%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03; pointer-events: none; z-index: 9999; animation: noise 0.4s steps(4) infinite;
+        }
+
+        @keyframes noise { 0%, 100% { transform: translate(0, 0); } 10% { transform: translate(-2%, -2%); } 30% { transform: translate(1%, -3%); } 50% { transform: translate(-1%, 3%); } 70% { transform: translate(2%, 1%); } 90% { transform: translate(-2%, -1%); } }
+
+        .grid-pattern { position: fixed; inset: 0; background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px; z-index: -2; opacity: 0.5; pointer-events: none; }
+        .scanline { width: 100%; height: 100px; z-index: 100; background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 100%); position: fixed; bottom: 110%; pointer-events: none; animation: scanline 8s linear infinite; }
+        @keyframes scanline { 0% { bottom: 110%; } 100% { bottom: -110px; } }
+
+        .gsap-nav { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-20px); display: flex; align-items: center; gap: 48px; z-index: 1000; background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; padding: 14px 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); opacity: 0; transition: border-color var(--transition); }
+        .gsap-nav:hover { border-color: rgba(255, 255, 255, 0.15); }
+        .logo { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--text-color); text-decoration: none; }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-links a { font-size: 11px; font-weight: 600; color: var(--muted-color); text-transform: uppercase; text-decoration: none; transition: color var(--transition); }
+        .nav-links a:hover, .nav-links a.active { color: #fff; }
+        .nav-time { font-size: 12px; font-weight: 500; color: var(--muted-color); font-variant-numeric: tabular-nums; padding-left: 24px; border-left: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+
+        .portfolio-header { padding: 250px 0 100px; text-align: left; position: relative; }
+        .portfolio-title { font-size: clamp(60px, 12vw, 180px); font-weight: 800; letter-spacing: -0.06em; line-height: 0.8; text-transform: uppercase; margin-bottom: 20px; }
+        .portfolio-subtitle { font-size: 12px; font-weight: 500; color: var(--muted-color); letter-spacing: 0.3em; text-transform: uppercase; display: block; border-left: 2px solid var(--border-color); padding-left: 20px; }
+
+        .works-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-bottom: 150px; }
+        .work-item { position: relative; text-decoration: none; display: block; opacity: 1; transform: none; background: #151515; border-radius: 4px; overflow: hidden; pointer-events: auto; }
+        .work-image-wrapper { width: 100%; aspect-ratio: 16/10; overflow: hidden; position: relative; }
+        .work-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); filter: saturate(0.8); }
+        .work-item:hover img { transform: scale(1.05); filter: saturate(1.1); }
+        .work-details { padding: 24px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .work-title { font-size: clamp(18px, 2vw, 24px); font-weight: 700; text-transform: uppercase; color: #fff; letter-spacing: -0.01em; margin-bottom: 8px; }
+        .work-description { font-size: 11px; color: var(--muted-color); line-height: 1.5; font-weight: 400; max-width: 250px; }
+
+        .hud-corner { position: absolute; width: 10px; height: 10px; border-color: rgba(255,255,255,0.1); border-style: solid; pointer-events: none; transition: var(--transition); }
+        .work-item:hover .hud-corner { border-color: rgba(255,255,255,0.4); }
+        .hud-tl { top: 20px; left: 20px; border-width: 1px 0 0 1px; }
+        .hud-br { bottom: 20px; right: 20px; border-width: 0 1px 1px 0; }
+
+        
+        @media (max-width: 1000px) {
+            .container { padding: 0 30px; }
+            .project-hero { padding-top: 180px; }
+            .gallery-grid { grid-template-columns: 1fr; gap: 30px; }
+            .item-wide, .item-pair { grid-column: auto; aspect-ratio: 16/9; }
+        }
+
+        /* 🍔 Burger Button Style */
+        .burger-btn {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            width: 24px;
+            padding: 10px 0;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .burger-btn span {
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: #fff;
+            transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+        }
+
+        /* 📱 Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 15, 15, 0.98);
+            backdrop-filter: blur(30px);
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 40px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.7, 0, 0.2, 1);
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 20px;
+        }
+
+        .mobile-link {
+            font-size: 42px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.04em;
+            color: #fff;
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.5s, transform 0.5s;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .mobile-menu-overlay.active .mobile-link {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Burger Active States (X Shape) */
+        .gsap-nav.menu-open #burger-toggle span:nth-child(1) {
+            transform: translateY(4px) rotate(45deg);
+        }
+
+        .gsap-nav.menu-open #burger-toggle span:nth-child(2) {
+            transform: translateY(-3px) rotate(-45deg);
+        }
+
+        @media (max-width: 900px) {
+            .gsap-nav { 
+                width: calc(100% - 40px); 
+                justify-content: space-between; 
+                padding: 10px 20px; 
+                border-radius: 40px;
+                gap: 20px;
+            }
+            .nav-links { display: none; }
+            .burger-btn { display: flex; }
+            .nav-time {
+                display: block;
+                border: none;
+                padding: 0;
+                font-size: 11px;
+                margin-left: auto;
+            }
+            .logo { font-size: 11px; }
+
+            /* Portfolio Grid Responsiveness */
+            .container { padding: 0 24px; }
+            .portfolio-header { margin-bottom: 40px; }
+            .portfolio-subtitle { font-size: 8px; }
+            .portfolio-title { font-size: 50px; }
+            
+            .works-grid {
+                grid-template-columns: 1fr; /* Cards one by one */
+                gap: 40px;
+            }
+            
+            .work-item {
+                transform: none !important; /* Reset any potential offsets */
+            }
+            
+            .work-title { font-size: 22px; }
+            .work-description { font-size: 11px; line-height: 1.5; }
+        }
+
+        /* Footer Style (Synced with index2) */
+        footer {
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--muted-color);
+            position: relative;
+            z-index: 5;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-socials a {
+            color: var(--muted-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+        }
+
+        .footer-socials a:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 900px) {
+            footer {
+                flex-direction: column;
+                gap: 24px;
+                padding: 40px 20px;
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="grid-pattern"></div>
+    <div class="scanline"></div>
+
+                    <nav class="gsap-nav">
+        <a href="index.html" class="logo">E. PULATOV</a>
+        <div class="nav-links">
+            <a href="index.html" class="custom-hover">Main</a>
+            <a href="portfolio.html" class="custom-hover">Portfolio</a>
+            <a href="contacts.html" class="custom-hover">Contacts</a>
+        </div>
+        <div class="nav-time" id="local-time">--:--</div>
+
+        <!-- Burger Menu -->
+        <div class="burger-btn" id="burger-toggle">
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu">
+        <div class="mobile-menu-inner">
+            <a href="index.html" class="mobile-link">Main</a>
+            <a href="portfolio.html" class="mobile-link">Portfolio</a>
+            <a href="contacts.html" class="mobile-link">Contacts</a>
+        </div>
+    </div>
+
+
+    <main class="container">
+        <header class="portfolio-header">
+            <span class="portfolio-subtitle gsap-reveal">Selected Archivum 2024-2025</span>
+            <h1 class="portfolio-title gsap-reveal">Portfolio</h1>
+        </header>
+
+        <div class="works-grid">
+            <!-- 01 Brazilia -->
+            <a href="brazilia.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/Brazilia(ziyokhonov-you-tube)/img_1.jpg" alt="Brazilia">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Brazilia</h3>
+                    <p class="work-description">Cinematic commercial color grading with a vibrant, tropical aesthetic.</p>
+                </div>
+            </a>
+
+            <!-- 02 IMAGINE -->
+            <a href="imagine.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/IMAGINE-(IT-Park)/img_1.jpg" alt="IMAGINE">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">IMAGINE</h3>
+                    <p class="work-description">Corporate storytelling with clean, high-tech color work for IT Park.</p>
+                </div>
+            </a>
+
+            <!-- 03 Porsche -->
+            <a href="porsche.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/Porsche-Uzbekistan/img_1.jpg" alt="Porsche">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Porsche</h3>
+                    <p class="work-description">Luxury automotive color grading, emphasizing metallic textures and speed.</p>
+                </div>
+            </a>
+
+            <!-- 04 Documentary Film -->
+            <a href="documentary-film.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/documentary-film/img_1.jpg" alt="Documentary Film">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Doc Film Vol. 1</h3>
+                    <p class="work-description">Intimate documentary storytelling with natural lighting and earthy tones.</p>
+                </div>
+            </a>
+
+            <!-- 05 Documentary Film 02 -->
+            <a href="documentary-film-2.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/documentary-film-240296585/img_2.jpg" alt="Documentary Film 02">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Doc Film Vol. 2</h3>
+                    <p class="work-description">A follow-up cinematic documentary exploring raw emotion and atmosphere.</p>
+                </div>
+            </a>
+
+            <!-- 06 Music Video -->
+            <a href="music-video.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/Music-video-240294969/img_1.jpg" alt="Music Video">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Music Video</h3>
+                    <p class="work-description">High-energy, stylized color grading for a dynamic musical production.</p>
+                </div>
+            </a>
+
+            <!-- 07 Milaf Cola -->
+            <a href="milaf-cola.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/Milaf-Cola-240295085/img_1.jpg" alt="Milaf Cola">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Milaf Cola</h3>
+                    <p class="work-description">Refreshing commercial advertising grading for a global beverage brand.</p>
+                </div>
+            </a>
+
+            <!-- 08 NRG -->
+            <a href="nrg.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/NRG-240282015/img_1.jpg" alt="NRG">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">NRG</h3>
+                    <p class="work-description">Technological architectural color grading for modern developments.</p>
+                </div>
+            </a>
+
+            <!-- 09 INSON -->
+            <a href="inson.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/documentary-film-(Inson)-240283827/img_1.jpg" alt="INSON">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">INSON</h3>
+                    <p class="work-description">Human-centered documentary grading with deep emotional weight.</p>
+                </div>
+            </a>
+
+            <!-- 10 Yapona Mama -->
+            <a href="yapona-mama.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/Yapona-Mama-240282389/img_1.jpg" alt="Yapona Mama">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Yapona Mama</h3>
+                    <p class="work-description">Vibrant food commercial grading with appetizing color palettes.</p>
+                </div>
+            </a>
+
+            <!-- 11 Switzerland -->
+            <a href="switzerland.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/Switzerland-(for-youtube-channel)-240295855/img_1.jpg" alt="Switzerland">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">Switzerland</h3>
+                    <p class="work-description">Cinematic travel color grading for premium YouTube content.</p>
+                </div>
+            </a>
+
+            <!-- 12 ITV -->
+            <a href="itv.html" class="work-item gsap-fade-up">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-br"></div>
+                <div class="work-image-wrapper">
+                    <img src="img/ITV-240296955/img_1.jpg" alt="ITV">
+                </div>
+                <div class="work-details">
+                    <h3 class="work-title">ITV</h3>
+                    <p class="work-description">Broadcast quality color grading for television networks.</p>
+                </div>
+            </a>
+        </div>
+    </main>
+
+            <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            &copy; 2026 E. PULATOV
+        </div>
+        <div class="footer-socials">
+            <a href="https://instagram.com" target="_blank" class="custom-hover">Ig</a>
+            <a href="https://t.me" target="_blank" class="custom-hover">Tg</a>
+            <a href="https://youtube.com" target="_blank" class="custom-hover">Yt</a>
+        </div>
+    </footer>
+
+
+    <script>
+        const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+        gsap.registerPlugin(ScrollTrigger);
+
+        function updateTime() {
+            const timeEl = document.getElementById('local-time');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Tashkent', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            if (timeEl) timeEl.textContent = 'Tashkent, ' + timeStr;
+        }
+        setInterval(updateTime, 1000); updateTime();
+
+        gsap.to('.gsap-nav', { opacity: 1, y: 0, duration: 1.5, ease: "expo.out", delay: 0.3 });
+        gsap.from('.gsap-reveal', { y: 60, opacity: 0, duration: 1.5, stagger: 0.2, ease: "expo.out", delay: 0.4 });
+
+        gsap.utils.toArray('.gsap-fade-up').forEach((item, i) => {
+            gsap.from(item, {
+                opacity: 0, y: 100, duration: 1.5, ease: "expo.out",
+                scrollTrigger: { trigger: item, start: 'top 90%', toggleActions: 'play none none none' }
+            });
+        });
+        
+        // Burger Menu Logic (Exact from index.html)
+        const burgerBtn = document.getElementById('burger-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navBar = document.querySelector('.gsap-nav');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            const isOpen = mobileMenu.classList.toggle('active');
+            navBar.classList.toggle('menu-open');
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+
+            if (isOpen) {
+                // Stagger reveal links
+                gsap.fromTo(".mobile-link",
+                    { opacity: 0, x: 40 },
+                    { opacity: 1, x: 0, duration: 0.6, stagger: 0.08, ease: "power4.out", delay: 0.2 }
+                );
+            }
+        }
+
+        if(burgerBtn) burgerBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+
+
+    </script>
+</body>
+</html>
